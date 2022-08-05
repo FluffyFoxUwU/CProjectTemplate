@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.18)
 
 project(ExampleProject VERSION 1.0.0
                  LANGUAGES C)
@@ -18,6 +18,7 @@ include(scripts/process_dot_config.cmake)
 set(ENABLE_ASAN OFF)
 set(ENABLE_MSAN OFF)
 set(ENABLE_TSAN OFF)
+set(ENABLE_UBSAN OFF)
 set(ENABLE_XRAY OFF)
 
 if (DEFINED CONFIG_ASAN) 
@@ -40,8 +41,37 @@ if (DEFINED CONFIG_LLVM_XRAY)
   set(ENABLE_XRAY ON)
 endif()
 
+if (DEFINED CONFIG_UBSAN) 
+  set(ENABLE_UBSAN ON)
+endif()
+
 add_executable(ExampleProject src/main.c
-                        )
+                        src/region.c
+                        src/asan_stuff.c
+                        src/util.c
+                        src/descriptor.c
+                        src/heap.c
+                        src/root.c
+                        src/thread.c
+                        src/root_iterator.c
+                        src/gc/gc.c
+                        src/gc/young_collector.c
+                        src/gc/old_collector.c
+                        src/gc/full_collector.c
+                        src/gc/marker.c
+                        src/collection/hashmap.c
+                        src/profiler.c
+                        src/collection/list.c
+                        src/collection/list_node.c
+                        src/collection/list_iterator.c
+                        src/gc/cardtable_iterator.c
+                        src/api_layer/v1.c
+                        src/reference_iterator.c
+                        src/thread_pool.c
+                        src/gc/common.c
+                        src/gc/parallel_marker.c
+                        src/gc/parallel_sweeper.c
+)
 
 target_compile_options(ExampleProject PRIVATE "-g")
 target_compile_options(ExampleProject PRIVATE "-O0")
@@ -54,14 +84,16 @@ target_compile_options(ExampleProject PRIVATE "-fno-omit-frame-pointer")
 target_compile_options(ExampleProject PRIVATE "-fno-common")
 target_compile_options(ExampleProject PRIVATE "-fno-optimize-sibling-calls")
 
-target_compile_options(ExampleProject PRIVATE "-fsanitize=undefined")
-#target_compile_options(ExampleProject PRIVATE "-fsanitize-address-use-after-return=always")
-target_compile_options(ExampleProject PRIVATE "-fsanitize=float-divide-by-zero")
-target_compile_options(ExampleProject PRIVATE "-fsanitize=implicit-conversion")
-target_compile_options(ExampleProject PRIVATE "-fsanitize=unsigned-integer-overflow")
+if (ENABLE_UBSAN)
+  target_compile_options(ExampleProject PRIVATE "-fsanitize=undefined")
+  #target_compile_options(ExampleProject PRIVATE "-fsanitize-address-use-after-return=always")
+  target_compile_options(ExampleProject PRIVATE "-fsanitize=float-divide-by-zero")
+  target_compile_options(ExampleProject PRIVATE "-fsanitize=implicit-conversion")
+  target_compile_options(ExampleProject PRIVATE "-fsanitize=unsigned-integer-overflow")
 
-target_link_options(ExampleProject PRIVATE "-fsanitize=undefined")
-target_link_options(ExampleProject PRIVATE "-static-libsan")
+  target_link_options(ExampleProject PRIVATE "-fsanitize=undefined")
+  target_link_options(ExampleProject PRIVATE "-static-libsan")
+endif()
 
 target_compile_definitions(ExampleProject PRIVATE "PROCESSED_BY_CMAKE")
 
@@ -77,8 +109,10 @@ if (ENABLE_TSAN)
 endif()
 
 if (ENABLE_XRAY)
-  target_compile_options(ExampleProject PRIVATE "-fxray-instrument -fxray-instruction-threshold=1")
-  target_link_options(ExampleProject PRIVATE "-fxray-instrument -fxray-instruction-threshold=1")
+  target_compile_options(ExampleProject PRIVATE "-fxray-instrument")
+  target_compile_options(ExampleProject PRIVATE "-fxray-instruction-threshold=1")
+  target_link_options(ExampleProject PRIVATE "-fxray-instrument")
+  target_link_options(ExampleProject PRIVATE "-fxray-instruction-threshold=1")
 endif()
 
 if (ENABLE_MSAN)
