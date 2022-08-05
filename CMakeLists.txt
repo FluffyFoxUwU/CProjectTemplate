@@ -46,31 +46,6 @@ if (DEFINED CONFIG_UBSAN)
 endif()
 
 add_executable(ExampleProject src/main.c
-                        src/region.c
-                        src/asan_stuff.c
-                        src/util.c
-                        src/descriptor.c
-                        src/heap.c
-                        src/root.c
-                        src/thread.c
-                        src/root_iterator.c
-                        src/gc/gc.c
-                        src/gc/young_collector.c
-                        src/gc/old_collector.c
-                        src/gc/full_collector.c
-                        src/gc/marker.c
-                        src/collection/hashmap.c
-                        src/profiler.c
-                        src/collection/list.c
-                        src/collection/list_node.c
-                        src/collection/list_iterator.c
-                        src/gc/cardtable_iterator.c
-                        src/api_layer/v1.c
-                        src/reference_iterator.c
-                        src/thread_pool.c
-                        src/gc/common.c
-                        src/gc/parallel_marker.c
-                        src/gc/parallel_sweeper.c
 )
 
 target_compile_options(ExampleProject PRIVATE "-g")
@@ -126,11 +101,11 @@ target_link_libraries(ExampleProject PRIVATE pthread)
 
 target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/src")
 target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/include")
-target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/src/collection")
 target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/libs")
 target_include_directories(ExampleProject PRIVATE "${PROJECT_BINARY_DIR}/src")
 
 configure_file(src/config.h src/processed_config.h)
+
 # Abusing
 configure_file(${PROJECT_SOURCE_DIR}/.config ${PROJECT_BINARY_DIR}/.config)
 
