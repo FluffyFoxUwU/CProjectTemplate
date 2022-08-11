@@ -14,107 +14,52 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(scripts/process_dot_config.cmake)
+include(scripts/compiler_and_link_flags.cmake)
 
-set(ENABLE_ASAN OFF)
-set(ENABLE_MSAN OFF)
-set(ENABLE_TSAN OFF)
-set(ENABLE_UBSAN OFF)
-set(ENABLE_XRAY OFF)
+## Deps here ##
+#add_subdirectory(libs/ExampleLib)
+#if (DEFINED CONFIG_DEP_EXAMPLELIB_USE_SHARED)
+#  target_link_libraries(ExampleProjectObjects ExampleLibShared)
+#else()
+#  target_link_libraries(ExampleProjectObjects ExampleLibStatic)
+#endif()
+###############
 
-if (DEFINED CONFIG_ASAN) 
-  set(ENABLE_ASAN ON)
-endif()
-
-if (DEFINED CONFIG_TSAN) 
-  set(ENABLE_TSAN ON)
-endif()
-
-if (DEFINED CONFIG_MSAN) 
-  set(ENABLE_MSAN ON)
-endif()
-
-if (DEFINED CONFIG_UBSAN) 
-  set(ENABLE_UBSAN ON)
-endif()
-
-if (DEFINED CONFIG_LLVM_XRAY) 
-  set(ENABLE_XRAY ON)
-endif()
-
-if (DEFINED CONFIG_UBSAN) 
-  set(ENABLE_UBSAN ON)
-endif()
-
-add_executable(ExampleProject src/main.c
+add_library(ExampleProjectObjects OBJECT
+  src/dummy.c
 )
 
-target_compile_options(ExampleProject PRIVATE "-g")
-target_compile_options(ExampleProject PRIVATE "-O0")
-target_compile_options(ExampleProject PRIVATE "-fvisibility=hidden")
-target_compile_options(ExampleProject PRIVATE "-Wall")
-target_compile_options(ExampleProject PRIVATE "-fblocks")
-target_compile_options(ExampleProject PRIVATE "-fno-sanitize-recover=all")
-target_compile_options(ExampleProject PRIVATE "-fsanitize-recover=unsigned-integer-overflow")
-target_compile_options(ExampleProject PRIVATE "-fno-omit-frame-pointer")
-target_compile_options(ExampleProject PRIVATE "-fno-common")
-target_compile_options(ExampleProject PRIVATE "-fno-optimize-sibling-calls")
-
-if (ENABLE_UBSAN)
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=undefined")
-  #target_compile_options(ExampleProject PRIVATE "-fsanitize-address-use-after-return=always")
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=float-divide-by-zero")
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=implicit-conversion")
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=unsigned-integer-overflow")
-
-  target_link_options(ExampleProject PRIVATE "-fsanitize=undefined")
-  target_link_options(ExampleProject PRIVATE "-static-libsan")
-endif()
-
-target_compile_definitions(ExampleProject PRIVATE "PROCESSED_BY_CMAKE")
-
-if (ENABLE_ASAN)
-  target_compile_options(ExampleProject PRIVATE "-fsanitize-address-use-after-scope")
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=address")
-  target_link_options(ExampleProject PRIVATE "-fsanitize=address")
-endif()
-
-if (ENABLE_TSAN)
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=thread")
-  target_link_options(ExampleProject PRIVATE "-fsanitize=thread")
-endif()
-
-if (ENABLE_XRAY)
-  target_compile_options(ExampleProject PRIVATE "-fxray-instrument")
-  target_compile_options(ExampleProject PRIVATE "-fxray-instruction-threshold=1")
-  target_link_options(ExampleProject PRIVATE "-fxray-instrument")
-  target_link_options(ExampleProject PRIVATE "-fxray-instruction-threshold=1")
-endif()
-
-if (ENABLE_MSAN)
-  target_compile_options(ExampleProject PRIVATE "-fsanitize-memory-track-origins")
-  target_compile_options(ExampleProject PRIVATE "-fsanitize=memory")
-  target_link_options(ExampleProject PRIVATE "-fsanitize=memory")
-endif()
-
-target_link_libraries(ExampleProject PRIVATE BlocksRuntime)
-target_link_libraries(ExampleProject PRIVATE pthread)
-
-target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/src")
-target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/include")
-target_include_directories(ExampleProject PRIVATE "${PROJECT_SOURCE_DIR}/libs")
-target_include_directories(ExampleProject PRIVATE "${PROJECT_BINARY_DIR}/src")
-
 configure_file(src/config.h src/processed_config.h)
-
-# Abusing
 configure_file(${PROJECT_SOURCE_DIR}/.config ${PROJECT_BINARY_DIR}/.config)
 
-# Suppression files
-add_custom_command(TARGET ExampleProject POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy
-                           ${PROJECT_SOURCE_DIR}/suppressions/UBSan.supp
-                           ${PROJECT_BINARY_DIR}/suppressions/UBSan.supp
-                           )
+add_library(ExampleProjectShared SHARED)
+target_link_libraries(ExampleProjectShared ExampleProjectObjects)
+target_compile_options(ExampleProjectShared PRIVATE "-fvisibility=hidden")
+
+add_library(ExampleProjectStatic STATIC)
+target_link_libraries(ExampleProjectStatic ExampleProjectObjects)
+
+# Test
+add_executable(ExampleProjectTest
+  src/specials.c
+  src/premain.c
+  src/main.c
+)
+target_link_libraries(ExampleProjectTest ExampleProjectCommonFlags)
+target_link_libraries(ExampleProjectTest ExampleProjectObjects)
+
+# Suppression files (abusing configure)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/suppressions/UBSan.supp 
+  ${PROJECT_BINARY_DIR}/suppressions/UBSan.supp
+)
+
+
+
+
+
+
+
 
 
 
