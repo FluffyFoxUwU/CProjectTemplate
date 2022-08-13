@@ -8,36 +8,6 @@ set_property(TARGET ExampleProjectCommonFlags
   PROPERTY POSITION_INDEPENDENT_CODE YES
 )
 
-set(ENABLE_ASAN OFF)
-set(ENABLE_MSAN OFF)
-set(ENABLE_TSAN OFF)
-set(ENABLE_UBSAN OFF)
-set(ENABLE_XRAY OFF)
-
-if (DEFINED CONFIG_ASAN) 
-  set(ENABLE_ASAN ON)
-endif()
-
-if (DEFINED CONFIG_TSAN) 
-  set(ENABLE_TSAN ON)
-endif()
-
-if (DEFINED CONFIG_MSAN) 
-  set(ENABLE_MSAN ON)
-endif()
-
-if (DEFINED CONFIG_UBSAN) 
-  set(ENABLE_UBSAN ON)
-endif()
-
-if (DEFINED CONFIG_LLVM_XRAY) 
-  set(ENABLE_XRAY ON)
-endif()
-
-if (DEFINED CONFIG_UBSAN) 
-  set(ENABLE_UBSAN ON)
-endif()
-
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-g")
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-fPIC")
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-O0")
@@ -51,7 +21,7 @@ target_compile_options(ExampleProjectCommonFlags INTERFACE "-fno-optimize-siblin
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-fvisibility=hidden")
 target_link_options(ExampleProjectCommonFlags INTERFACE "-fPIC")
 
-if (ENABLE_UBSAN)
+if (DEFINED CONFIG_UBSAN)
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=undefined")
   #target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize-address-use-after-return=always")
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=float-divide-by-zero")
@@ -64,25 +34,25 @@ endif()
 
 target_compile_definitions(ExampleProjectCommonFlags INTERFACE "PROCESSED_BY_CMAKE")
 
-if (ENABLE_ASAN)
+if (DEFINED CONFIG_ASAN)
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize-address-use-after-scope")
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=address")
   target_link_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=address")
 endif()
 
-if (ENABLE_TSAN)
+if (DEFINED CONFIG_TSAN)
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=thread")
   target_link_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=thread")
 endif()
 
-if (ENABLE_XRAY)
+if (DEFINED CONFIG_XRAY)
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fxray-instrument")
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fxray-instruction-threshold=1")
   target_link_options(ExampleProjectCommonFlags INTERFACE "-fxray-instrument")
   target_link_options(ExampleProjectCommonFlags INTERFACE "-fxray-instruction-threshold=1")
 endif()
 
-if (ENABLE_MSAN)
+if (DEFINED CONFIG_MSAN)
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize-memory-track-origins")
   target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=memory")
   target_link_options(ExampleProjectCommonFlags INTERFACE "-fsanitize=memory")
