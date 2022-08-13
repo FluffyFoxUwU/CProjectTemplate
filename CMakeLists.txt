@@ -40,8 +40,11 @@ configure_file(src/config.h src/processed_config.h)
 configure_file(${PROJECT_SOURCE_DIR}/.config ${PROJECT_BINARY_DIR}/.config)
 
 add_library(ExampleProject ${ExampleProject_SOURCES})
-target_link_libraries(ExampleProject ExampleProjectCommonFlags)
 target_include_directories(ExampleProjectCommonFlags PUBLIC "${PROJECT_SOURCE_DIR}/include")
+
+## Deps here ##
+target_link_libraries(ExampleProject ExampleProjectCommonFlags)
+###############
 
 add_executable(ExampleProjectTest ${ExampleProject_TEST_SOURCES})
 target_link_libraries(ExampleProjectTest ExampleProjectCommonFlags)
