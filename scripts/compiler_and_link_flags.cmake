@@ -48,6 +48,7 @@ target_compile_options(ExampleProjectCommonFlags INTERFACE "-fsanitize-recover=u
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-fno-omit-frame-pointer")
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-fno-common")
 target_compile_options(ExampleProjectCommonFlags INTERFACE "-fno-optimize-sibling-calls")
+target_compile_options(ExampleProjectCommonFlags INTERFACE "-fvisibility=hidden")
 target_link_options(ExampleProjectCommonFlags INTERFACE "-fPIC")
 
 if (ENABLE_UBSAN)
@@ -91,7 +92,6 @@ target_link_libraries(ExampleProjectCommonFlags INTERFACE BlocksRuntime)
 target_link_libraries(ExampleProjectCommonFlags INTERFACE pthread)
 target_link_libraries(ExampleProjectCommonFlags INTERFACE protobuf-c)
 
-target_include_directories(ExampleProjectCommonFlags INTERFACE "${PROJECT_SOURCE_DIR}/include")
 target_include_directories(ExampleProjectCommonFlags INTERFACE "${PROJECT_BINARY_DIR}/src")
 target_include_directories(ExampleProjectCommonFlags INTERFACE "${PROJECT_SOURCE_DIR}/src")
 
