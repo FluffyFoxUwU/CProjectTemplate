@@ -18,15 +18,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 ##################################
 ## Dont touch anything but this ##
 ##################################
-set(ExampleProject_SOURCES
+set(PROJECT_SOURCES
   src/dummy.c
 )
 
-set(ExampleProject_PUBLIC_HEADERS
+set(PROJECT_PUBLIC_HEADERS
   include/dummy.h
 )
 
-set(ExampleProject_TEST_SOURCES
+set(PROJECT_TEST_SOURCES
   src/specials.c
   src/premain.c
   src/main.c
@@ -46,15 +46,30 @@ include(scripts/compiler_and_link_flags.cmake)
 configure_file(src/config.h src/processed_config.h)
 configure_file(${PROJECT_SOURCE_DIR}/.config ${PROJECT_BINARY_DIR}/.config)
 
-add_library(ExampleProject ${ExampleProject_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES})
+set_target_properties(${PROJECT_NAME}
+  PROPERTIES
+  VERSION ${CONFIG_VERSION_MAJOR}.${CONFIG_VERSION_MINOR}.${CONFIG_VERSION_PATCH}${VERSION_LOCAL_VERSION}
+  SOVERSION ${CONFIG_VERSION_MAJOR}
+)
+
+find_package(PkgConfig REQUIRED)
+function (AddPkgConfigLib name spec)
+  pkg_check_modules(${name} REQUIRED ${spec})
+  target_link_libraries(ProjectCommonFlags INTERFACE ${${name}_LIBRARIES})
+  target_include_directories(ProjectCommonFlags INTERFACE ${${name}_INCLUDE_DIRS})
+  target_compile_options(ProjectCommonFlags INTERFACE ${${name}_CFLAGS_OTHER})
+endfunction()
 
 ## Deps here ##
-target_link_libraries(ExampleProject ProjectCommonFlags)
+target_link_libraries(${PROJECT_NAME} ProjectCommonFlags)
+
+AddPkgConfigLib(FluffyGC FluffyGC>=1.0.0)
 ###############
 
-add_executable(ExampleProjectTest ${ExampleProject_TEST_SOURCES})
-target_link_libraries(ExampleProjectTest ProjectCommonFlags)
-target_link_libraries(ExampleProjectTest ExampleProject)
+add_executable(TestExecutable ${PROJECT_TEST_SOURCES})
+target_link_libraries(TestExecutable ProjectCommonFlags)
+target_link_libraries(TestExecutable ${PROJECT_NAME})
 
 # Installations
 include(GNUInstallDirs)
@@ -63,18 +78,23 @@ install(TARGETS ${PROJECT_NAME} DESTINATION lib/${PROJECT_NAME})
 
 # Install library headers
 install(
-  FILES ${ExampleProject_PUBLIC_HEADERS}
+  FILES ${PROJECT_PUBLIC_HEADERS}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ExampleProject
 )
 
 # Install library
 install(
-  TARGETS ExampleProject
+  TARGETS ${PROJECT_NAME}
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/
+  PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE
+  PERMISSIONS
+    WORLD_READ    GROUP_READ    OWNER_READ      
+                                OWNER_WRITE
+    WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE
 )
 
 # Install pkgconfig file
-set(target ExampleProject)
+set(target ${PROJECT_NAME})
 configure_file(package.pc.in
   ${CMAKE_BINARY_DIR}/ExampleProject.pc @ONLY)
 install(

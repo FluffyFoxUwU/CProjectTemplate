@@ -33,11 +33,11 @@ endmenu
 menu General
   config VERSION_MAJOR
     int
-    default 1
+    default 0
 
   config VERSION_MINOR
     int
-    default 0
+    default 1
 
   config VERSION_PATCH
     int
