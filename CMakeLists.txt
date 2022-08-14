@@ -63,8 +63,6 @@ endfunction()
 
 ## Deps here ##
 target_link_libraries(${PROJECT_NAME} ProjectCommonFlags)
-
-AddPkgConfigLib(FluffyGC FluffyGC>=1.0.0)
 ###############
 
 add_executable(TestExecutable ${PROJECT_TEST_SOURCES})
