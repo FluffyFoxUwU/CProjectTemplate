@@ -34,7 +34,7 @@ set(BUILD_PUBLIC_HEADERS
   include/dummy.h
 )
 
-# AddPkgConfigLib is in CMakeLists.txt
+# AddPkgConfigLib is in ./buildsystem/CMakeLists.txt
 macro(AddDependencies)
   # Example
   # AddPkgConfigLib(FluffyGC FluffyGC>=1.0.0)
