@@ -34,6 +34,9 @@ set(BUILD_PUBLIC_HEADERS
   include/dummy.h
 )
 
+set(BUILD_CFLAGS "")
+set(BUILD_LDFLAGS "")
+
 # AddPkgConfigLib is in ./buildsystem/CMakeLists.txt
 macro(AddDependencies)
   # Example
