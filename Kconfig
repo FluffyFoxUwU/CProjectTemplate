@@ -21,13 +21,53 @@ menu Debugging
       bool "Enable Memory Sanitizer"
   endchoice
   
-  config UBSAN
-    bool "Enable Undefined behavior Sanitizer"
-    default n
+  menu "Address Sanitizer"
+    visible if ASAN
 
+    config ASAN_OPTS
+      string "Default ASAN options"
+      default "fast_unwind_on_malloc=0:detect_invalid_pointer_pairs=10:strict_string_checks=1:strict_init_order=1:check_initialization_order=1:print_stats=1:detect_stack_use_after_return=1:atexit=1" 
+  endmenu   
+
+  menu "Memory Sanitizer"  
+    visible if MSAN
+
+    config MSAN_OPTS
+      string "Default MSAN options"
+      default ""
+  endmenu
+
+  menu "Thread Sanitizer"  
+    visible if TSAN
+
+    config TSAN_OPTS
+      string "Default TSAN options"
+      default "second_deadlock_stack=1"
+  endmenu
+  
   config LLVM_XRAY
     bool "Enable LLVM's XRay instrumentation"
     default n
+
+  menu "LLVM XRay"
+    visible if LLVM_XRAY
+
+    config LLVM_XRAY_OPTS
+      string "Default XRay options"
+      default "xray_mode=xray-basic:patch_premain=true:verbosity=1"
+  endmenu
+  
+  config UBSAN
+    bool "Enable Undefined behavior Sanitizer"
+    default n
+  
+  menu "Undefined Sanitizer"
+    visible if UBSAN
+
+    config UBSAN_OPTS
+      string "Default UBSAN options"
+      default "print_stacktrace=1:suppressions=suppressions/UBSan.supp"
+  endmenu  
 endmenu
 
 menu General
