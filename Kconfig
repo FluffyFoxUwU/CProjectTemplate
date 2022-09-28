@@ -22,7 +22,7 @@ menu Debugging
   endchoice
   
   menu "Address Sanitizer"
-    visible if ASAN
+    depends on ASAN
 
     config ASAN_OPTS
       string "Default ASAN options"
@@ -30,7 +30,7 @@ menu Debugging
   endmenu   
 
   menu "Memory Sanitizer"  
-    visible if MSAN
+    depends on MSAN
 
     config MSAN_OPTS
       string "Default MSAN options"
@@ -38,7 +38,7 @@ menu Debugging
   endmenu
 
   menu "Thread Sanitizer"  
-    visible if TSAN
+    depends on TSAN
 
     config TSAN_OPTS
       string "Default TSAN options"
@@ -50,7 +50,7 @@ menu Debugging
     default n
 
   menu "LLVM XRay"
-    visible if LLVM_XRAY
+    depends on LLVM_XRAY
 
     config LLVM_XRAY_OPTS
       string "Default XRay options"
@@ -62,7 +62,7 @@ menu Debugging
     default n
   
   menu "Undefined Sanitizer"
-    visible if UBSAN
+    depends on UBSAN
 
     config UBSAN_OPTS
       string "Default UBSAN options"

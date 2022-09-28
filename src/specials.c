@@ -32,7 +32,11 @@ const char* __msan_default_options() {
 }
 #endif
 
+#if IS_ENABLED(CONFIG_LLVM_XRAY)
 static const char* xrayOpts = CONFIG_LLVM_XRAY_OPTS;
+#else
+static const char* xrayOpts = "";
+#endif
 
 static void selfRestart(char** argv) {
   int err = setenv("XRAY_OPTIONS", xrayOpts, true);
