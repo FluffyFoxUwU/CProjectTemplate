@@ -4,14 +4,19 @@ set(BUILD_PROJECT_NAME "ExampleProject")
 
 # We're making library
 set(BUILD_IS_LIBRARY NO)
+set(BUILD_IS_KERNEL NO)
 
 # If we want make libary and
 # executable project
 set(BUILD_INSTALL_EXECUTABLE YES)
+set(BUILD_MAXIMUM_PERFORMANCE NO)
 
 # Sources which common between exe and library
 set(BUILD_SOURCES
   src/dummy.c
+)
+
+set(BUILD_INCLUDE_DIRS
 )
 
 # Note that exe does not represent Windows' 
@@ -32,6 +37,9 @@ set(BUILD_EXE_SOURCES
 # If this a library
 set(BUILD_PUBLIC_HEADERS
   include/dummy.h
+)
+
+set(BUILD_PROTOBUF_FILES
 )
 
 set(BUILD_CFLAGS "")
