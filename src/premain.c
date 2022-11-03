@@ -3,6 +3,7 @@
 
 #include "specials.h"
 #include "config.h"
+#include "bug.h"
 
 // Pre-main
 int main2(int argc, char** argv);
@@ -28,11 +29,13 @@ int main(int argc, char** argv) {
     .argc = argc,
     .argv = argv
   };
+  
   if (IS_ENABLED(CONFIG_DONT_START_SEPERATE_MAIN_THREAD)) {
     testWorker(&args);
   } else {
     pthread_t tmp;
-    pthread_create(&tmp, NULL, testWorker, &args);
+    int res = pthread_create(&tmp, NULL, testWorker, &args);
+    BUG_ON(res != 0);
     pthread_join(tmp, NULL);
   }
 
