@@ -2,15 +2,6 @@
 
 set(BUILD_PROJECT_NAME "ExampleProject")
 
-# We're making library
-set(BUILD_IS_LIBRARY NO)
-set(BUILD_IS_KERNEL NO)
-
-# If we want make libary and
-# executable project
-set(BUILD_INSTALL_EXECUTABLE YES)
-set(BUILD_MAXIMUM_PERFORMANCE NO)
-
 # Sources which common between exe and library
 set(BUILD_SOURCES
   src/dummy.c
@@ -34,7 +25,6 @@ set(BUILD_EXE_SOURCES
 )
 
 # Public header to be exported
-# If this a library
 set(BUILD_PUBLIC_HEADERS
   include/dummy.h
 )
@@ -45,10 +35,17 @@ set(BUILD_PROTOBUF_FILES
 set(BUILD_CFLAGS "")
 set(BUILD_LDFLAGS "")
 
-# AddPkgConfigLib is in ./buildsystem/CMakeLists.txt
 macro(AddDependencies)
   # Example
   # AddPkgConfigLib(FluffyGC FluffyGC>=1.0.0)
 endmacro()
 
+macro(PreConfigurationLoad)
+  # Do pre config stuffs
+endmacro()
+
+macro(PostConfigurationLoad)
+  # Do post config stuffs
+  # like deciding whether to include or not include some files
+endmacro()
 

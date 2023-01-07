@@ -8,32 +8,32 @@
 
 #include "config.h"
 
-#if IS_ENABLED(CONFIG_ASAN)
+#if IS_ENABLED(CONFIG_BUILD_ASAN)
 const char* __asan_default_options() {
-  return CONFIG_ASAN_OPTS;
+  return CONFIG_BUILD_ASAN_OPTS;
 }
 #endif
 
-#if IS_ENABLED(CONFIG_UBSAN)
+#if IS_ENABLED(CONFIG_BUILD_UBSAN)
 const char* __ubsan_default_options() {
-  return CONFIG_UBSAN_OPTS;
+  return CONFIG_BUILD_UBSAN_OPTS;
 }
 #endif
 
-#if IS_ENABLED(CONFIG_TSAN)
+#if IS_ENABLED(CONFIG_BUILD_TSAN)
 const char* __tsan_default_options() {
   return CONFIG_TSAN_OPTS;
 }
 #endif
 
-#if IS_ENABLED(CONFIG_MSAN)
+#if IS_ENABLED(CONFIG_BUILD_MSAN)
 const char* __msan_default_options() {
-  return CONFIG_MSAN_OPTS;
+  return CONFIG_BUILD_MSAN_OPTS;
 }
 #endif
 
-#if IS_ENABLED(CONFIG_LLVM_XRAY)
-static const char* xrayOpts = CONFIG_LLVM_XRAY_OPTS;
+#if IS_ENABLED(CONFIG_BUILD_LLVM_XRAY)
+static const char* xrayOpts = CONFIG_BUILD_LLVM_XRAY_OPTS;
 #else
 static const char* xrayOpts = "";
 #endif
@@ -61,7 +61,7 @@ static void selfRestart(char** argv) {
 }
 
 void special_premain(int argc, char** argv) {
-  if (!IS_ENABLED(CONFIG_LLVM_XRAY))
+  if (!IS_ENABLED(CONFIG_BUILD_LLVM_XRAY))
     return;
 
   const char* var;
