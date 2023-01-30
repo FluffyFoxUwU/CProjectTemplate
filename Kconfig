@@ -35,6 +35,26 @@ menu General
       platform specific API usage
 endmenu
 
+menu Debugging
+  config ENABLE_STACKTRACE
+    bool "Enable stacktrace support"
+    depends on !STRICTLY_POSIX
+    help
+      This prints stacktrace for panics, bugs, etc
+  
+  choice
+    prompt "Stacktrace provider"
+    depends on ENABLE_STACKTRACE
+    
+    config STACKTRACE_PROVIDER_LIBBACKTRACE
+      bool "libbacktrace"
+  endchoice
+  
+  config STACKTRACE_USE_DLADDR
+    bool "Use dladdr to get function name if debug info unavailable"
+    depends on ENABLE_STACKTRACE && !STRICTLY_POSIX
+endmenu
+
 menu "Fun"
   config COMPILE_UWUIFY_UTIL
     bool

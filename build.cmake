@@ -8,6 +8,8 @@ set(BUILD_SOURCES
   src/util/util.c
   src/util/circular_buffer.c
   src/logging/logging.c
+  src/panic.c
+  src/stacktrace/stacktrace.c
   
   deps/vec/vec.c
   deps/buffer/buffer.c
@@ -61,8 +63,12 @@ endmacro()
 macro(PostConfigurationLoad)
   # Do post config stuffs
   # like deciding whether to include or not include some files
-  if (DEFINED COMPILE_UWUIFY_UTIL)
+  if (DEFINED CONFIG_COMPILE_UWUIFY_UTIL)
     list(APPEND BUILD_SOURCES src/util/uwuify.c)
+  endif()
+  
+  if (DEFINED CONFIG_STACKTRACE_PROVIDER_LIBBACKTRACE)
+    list(APPEND BUILD_SOURCES src/stacktrace/provider/libbacktrace.c)
   endif()
 endmacro()
 

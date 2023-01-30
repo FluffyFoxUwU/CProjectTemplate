@@ -6,9 +6,10 @@
 
 // Linux kernel style bug 
 
+#include "panic.h"
+
 #define BUG() do { \
- fprintf(stderr, "BUG: failure at %s:%d/%s()!\n", __FILE__, __LINE__, __func__); \
- abort(); \
+  panic("BUG: failure at %s:%d/%s()!", __FILE__, __LINE__, __func__); \
 } while(0)
 
 #define BUG_ON(cond) do { \
